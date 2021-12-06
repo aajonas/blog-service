@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aajonas/blog-service/global"
+	"github.com/aajonas/blog-service/internal/model"
 	"github.com/aajonas/blog-service/internal/routers"
 	"github.com/aajonas/blog-service/pkg/setting"
 	"github.com/gin-gonic/gin"
@@ -15,6 +15,10 @@ func init() {
 	err := setupSetting()
 	if err != nil {
 		log.Fatalf("init.setupSetting err: %v", err)
+	}
+	err = setupDBEngine()
+	if err != nil {
+		log.Fatalf("init.setupDBEngine err: %v", err)
 	}
 }
 
@@ -51,5 +55,15 @@ func setupSetting() error {
 
 	global.ServerSetting.ReadTimeout *= time.Second
 	global.ServerSetting.WriteTimeout *= time.Second
+	return nil
+}
+
+func setupDBEngine() error {
+	var err error
+	global.DBEngine, err = model.NewDBEngine(global.DatabaseSetting)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
